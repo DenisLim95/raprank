@@ -1,0 +1,67 @@
+
+<% include partials/header %>
+
+
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="hottest-tab" data-toggle="tab" href="#hottest" role="tab" aria-controls="hottest" aria-selected="true">Hot</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="new" aria-selected="false">New</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="trending-tab" data-toggle="tab" href="#trending" role="tab" aria-controls="trending" aria-selected="false">Trending</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="top-tab" data-toggle="tab" href="#top" role="tab" aria-controls="top" aria-selected="false">Top</a>
+  </li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="hottest" role="tabpanel" aria-labelledby="hottest-tab">
+    <div class="form-inline">
+        <h1>hot</h1>
+        <form action="/main/new">
+            <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/new">Upload Beat</button>            
+        </form>
+        
+    </div>
+
+    
+
+
+
+    <div class="container">
+        <% beats.forEach(function(beat) { %>
+            <div class="form-inline" style="margin-top:5px;">
+              <div style="width:60px">
+                <h6><%= beat.upvotes %></h6>
+              </div>
+                
+              <img src="<%= beat.image %>" height=50px width=60px></img>
+              <div class="caption">
+                <div style="padding-left:10px">
+                    <p>
+                      <a href="/main/<%= beat._id %>">  
+                        "<%= beat.name %>" by <%= beat.producer %>
+                      </a>
+                    </p>
+                </div> 
+              </div>                    
+            </div>
+        
+        <% }); %>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="new" role="tabpanel" aria-labelledby="new-tab">NEW</div>
+  <div class="tab-pane" id="trending" role="tabpanel" aria-labelledby="trending-tab">TRENDING</div>
+  <div class="tab-pane" id="top" role="tabpanel" aria-labelledby="top-tab">TOP</div>
+</div>
+
+<script>
+  $(function () {
+    $('#myTab li:first-child a').tab('show')
+  })
+</script>
+
