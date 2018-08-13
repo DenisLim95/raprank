@@ -63,7 +63,7 @@ app.get("/main", function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      res.render("main", {beats: allBeats});
+      res.render("index", {beats: allBeats});
     }
   });
     // res.render("main", {beats: beats});
@@ -98,6 +98,19 @@ app.get("/main/new", function(req, res) {
 
 // }
 
+// SHOW - shows more info about one beat
+app.get("/main/:id", function(req, res) {
+  console.log("Works!");
+
+  // find beat with provided ID
+  Beat.findById(req.params.id, function(err, foundBeat) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("show", {beat: foundBeat});
+    }
+  });
+});
 
 app.listen(process.env.PORT || 4000, process.env.IP, function() {
     console.log("RapRank server has started locally on 4000...");
