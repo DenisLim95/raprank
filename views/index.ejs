@@ -27,15 +27,11 @@
         
     </div>
 
-    
-
-
-
     <div class="container">
         <% beats.forEach(function(beat) { %>
             <div class="form-inline" style="margin-top:5px;">
               <div style="width:60px">
-                <h6><%= beat.upvotes %></h6>
+                <h6><%= beat.meta.upvotes %></h6>
               </div>
                 
               <img src="<%= beat.image %>" height=50px width=60px></img>

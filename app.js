@@ -17,7 +17,19 @@ var beatSchema = new mongoose.Schema({
   name: String,
   producer: String,
   image: String,
-  upvotes: Number
+  upvotes: Number,
+  renditions: [{
+    artist: String,
+    url: String,
+    rank: Number
+  }],
+  source: String, // music streaming url (soundcloud?)
+  meta: {
+    upvotes: Number,
+    favs: Number
+  },
+  comments: [{body: String, date: Date}]
+
 });
 
 var Beat = mongoose.model("Beat", beatSchema);
@@ -74,8 +86,13 @@ app.post("/main", function(req, res) {
    var name = req.body.name;
    var producer = req.body.producer;
    var image = req.body.image;
+   var source = req.body.source;
+
    var upvotes = 0;
-   var newBeat = {id:id, name: name, producer: producer,image: image, upvotes: upvotes};
+   var favs = 0;
+   var meta = {upvotes,favs};
+
+   var newBeat = {id:id, name: name, producer: producer,image: image, meta: meta, source: source};
    // beats.push(newBeat);
 
    // Create new beat and save to DB
@@ -89,9 +106,27 @@ app.post("/main", function(req, res) {
    });
 });
 
+app.post("/main/:id", function(req, res) {
+
+    var artist = req.body.artist;
+    var url = req.body.url;
+    var rank = 200;
+
+    var newRendition = {artist,url,rank};
+    
+
+    // NEED TO FINISH THIS@@@@@@!!
+
+
+});
+
+app.get("/main/:id/new", function(req,res) {
+  res.render("newRendition");
+});
+
 app.get("/main/new", function(req, res) {
     res.render("new");
-})
+});
 
 // Here do the GET of beats. * Need to be beat id specific. Udemycourse explains this.
 // app.get("/") {

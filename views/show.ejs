@@ -1,5 +1,33 @@
 
 <% include partials/header %>
-<h1>This is the show template!</h1>
-<p><%= beat.name %></p>
+
+
+<div class="container">
+	<h2>Beat: <%= beat.name %> by <%= beat.producer %></h2>	
+
+
+	<div style="outline-style: solid">
+		<p><%= beat.source %></p>
+	</div>
+
+	<h1>HARO</h1>
+	<form action="/main/:id/new">
+            <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/:id/new">Upload Beat</button>            
+        </form>
+
+	<% (beat.renditions).forEach(function(rendition) { %>
+        <div class="form-inline" style="margin-top:5px;">
+
+        	<p><%= rendition.artist %></p>
+
+
+        </div>
+        
+    
+    <% }); %>
+
+
+</div>
+
+
 
