@@ -14,7 +14,7 @@
         <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/<%= beat._id %>/new">Upload your own rendition!</button>            
     </form>
 
-    	<% if (beat.renditions.length > 1) { %>
+    	<% if (beat.renditions.length > 0) { %>
     		<% (beat.renditions).forEach(function(rendition) { %>
 		            <div class="form-inline" style="margin-top:5px; outline-style: solid">
 		              <div>
