@@ -189,8 +189,6 @@ app.get("/main/:id", function(req, res) {
     if (err) {
       console.log(err);
     } else {
-      console.log("TEST");
-      console.log(foundBeat.renditions[0].artist);
       res.render("show", {beat: foundBeat});
     }
   });

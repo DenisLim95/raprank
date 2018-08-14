@@ -14,19 +14,22 @@
         <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/<%= beat._id %>/new">Upload your own rendition!</button>            
     </form>
 
-    <% (beat.renditions).forEach(function(rendition) { %>
-            <div class="form-inline" style="margin-top:5px; outline-style: solid">
-              <div>
-                <h6>Rendition by <%= rendition.artist %></h6>
-                <h6>source: <%= rendition.url %></h6>
-                <h6>rank: <%= rendition.rank %></h6>
-              </div>
-                                   
-            </div>
-        
-    <% }); %>
-
-
+    	<% if (beat.renditions.length > 1) { %>
+    		<% (beat.renditions).forEach(function(rendition) { %>
+		            <div class="form-inline" style="margin-top:5px; outline-style: solid">
+		              <div>
+		                <h6>Rendition by <%= rendition.artist %></h6>
+		                <h6>source: <%= rendition.url %></h6>
+		                <h6>rank: <%= rendition.rank %></h6>
+		              </div>
+		                                   
+		            </div>
+		        
+		    <% }); %>
+    	<% } else { %>
+	         <p> No renditions yet...</p>
+	    <% } %>
+	    
 </div>
 
 
