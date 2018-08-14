@@ -2,24 +2,33 @@
 <% include partials/header %>
 <div class="container">
     <div class="row">
-        <h1 style="text-align: center">Upload your beat</h1>
+        <h1 style="text-align: center">Upload your rendition!</h1>
         <div style="width: 30%; margin: 25px auto;">
-            <form action="/main" method="POST">
-                <div class="form-group">
-                    <input class="form-control" type="text" placeholder="track name" name="name">
-                </div>
+            <form action="/rendition" method="POST">
 
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="producer name" name="producer">
-                </div>
-                 
-                <div class="form-group">
-                    <input class="form-control" type="text" placeholder="image-url" name="image">
+                    <input class="form-control" type="text" placeholder="artist name" name="artist">
                 </div>
                 
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="song-url" name="source">
+                    <input class="form-control" type="text" placeholder="rendition-url" name="source">
                 </div>
+
+                <input type="hidden" id="url" name="id" value="" />
+
+                <script type="text/javascript">
+                    // document.getElementById('id').value = window.location.href;
+                    var element = document.getElementById('url');
+
+                    var pathArray = window.location.href.split('/');
+                    var id = pathArray[pathArray.length-2];
+                    element.value = id;
+                    // document.getElementById('id', function(element) {
+                    //     var pathArray = window.location.href.split('/');
+                    //     var id = pathArray[-2];
+                    //     element.value = id;
+                    // });
+                </script>
 
                 <div class="form-group">
                     <button class="btn btn-lg btn-primary btn-block">Submit</button>    

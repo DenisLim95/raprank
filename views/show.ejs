@@ -10,20 +10,20 @@
 		<p><%= beat.source %></p>
 	</div>
 
-	<h1>HARO</h1>
-	<form action="/main/:id/new">
-            <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/:id/new">Upload Beat</button>            
-        </form>
+	<form action="/main/<%= beat._id %>/new">
+        <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/<%= beat._id %>/new">Upload your own rendition!</button>            
+    </form>
 
-	<% (beat.renditions).forEach(function(rendition) { %>
-        <div class="form-inline" style="margin-top:5px;">
-
-        	<p><%= rendition.artist %></p>
-
-
-        </div>
+    <% (beat.renditions).forEach(function(rendition) { %>
+            <div class="form-inline" style="margin-top:5px; outline-style: solid">
+              <div>
+                <h6>Rendition by <%= rendition.artist %></h6>
+                <h6>source: <%= rendition.url %></h6>
+                <h6>rank: <%= rendition.rank %></h6>
+              </div>
+                                   
+            </div>
         
-    
     <% }); %>
 
 

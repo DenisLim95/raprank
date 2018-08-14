@@ -12,6 +12,14 @@ app.set("view engine", "ejs");
 
 
 // SCHEMA SETUP
+var renditionSchema = new mongoose.Schema({
+  artist: String,
+    url: String,
+    rank: Number
+});
+
+var Rendition = mongoose.model("Rendition", renditionSchema);
+
 var beatSchema = new mongoose.Schema({
   id: Number,
   name: String,
@@ -33,6 +41,7 @@ var beatSchema = new mongoose.Schema({
 });
 
 var Beat = mongoose.model("Beat", beatSchema);
+
 // Beat.create(
 //     {
 //         id:1, 
@@ -65,12 +74,13 @@ var Beat = mongoose.model("Beat", beatSchema);
 //   ];
 
 
+// Landing Route
 app.get("/", function(req, res) {
     res.render("landing");
 });
 
+// RapRank Main page
 app.get("/main", function(req, res) {
-
   Beat.find({}, function(err, allBeats) {
     if (err) {
       console.log(err);
@@ -78,9 +88,9 @@ app.get("/main", function(req, res) {
       res.render("index", {beats: allBeats});
     }
   });
-    // res.render("main", {beats: beats});
 });
 
+// Post to main (Upload new beat)
 app.post("/main", function(req, res) {
    var id = 99;
    var name = req.body.name;
@@ -106,46 +116,86 @@ app.post("/main", function(req, res) {
    });
 });
 
-app.post("/main/:id", function(req, res) {
+// POST to /main/:id (Upload own rendition)
+app.post("/rendition", function(req, res) {
 
     var artist = req.body.artist;
-    var url = req.body.url;
+    var source = req.body.source;
     var rank = 200;
 
-    var newRendition = {artist,url,rank};
+    var newRendition = {artist:artist,url:source,rank:rank};
     
+    Beat.findByIdAndUpdate(req.body.id,
+        {$push: {renditions: newRendition}},
+        {safe: true, upsert: true},
+        function(err, doc) {
+            if(err){
+              console.log(err);
+            }else{
+            //do stuff
+            // console.log(doc.renditions);
+            console.log(doc);
 
-    // NEED TO FINISH THIS@@@@@@!!
+              res.redirect("/main/" + req.body.id);
+            }
+        }
+    );
 
 
+
+    // Beat.findById(req.body.id, function(err, foundBeat) {
+    //   if (err) {
+    //     console.log("ERROR: cannot upload new rendition");
+    //     console.log(err);
+    //   } else {
+        
+    //     foundBeat.renditions.push({artist:artist,url:source,rank:rank});
+    //     console.log(foundBeat.renditions);
+    //     // Rendition.create(newRendition, function(err, newlyCreatedRendition) {
+    //     //   if (err) {
+    //     //     console.log(err);
+    //     //   } else {
+    //     //     console.log(foundBeat.renditions);
+    //     //     foundBeat.renditions.push(newlyCreatedRendition);
+    //     //     res.redirect("/main/" + req.body.id);
+
+    //     //   }
+    //     // });
+
+    //     // foundBeat.renditions.push(newRendition);
+    //     // console.log("POST NEW RENDITION WORKS!");
+    //     // console.log(foundBeat);
+    //     // console.log(req.params.id);
+    //     // res.redirect("/main/" + req.body.id);
+    //   }
+    // }); 
 });
 
+// "New" page for uploading the new rendition
 app.get("/main/:id/new", function(req,res) {
   res.render("newRendition");
 });
 
+// "New" page for uploading new beat
 app.get("/main/new", function(req, res) {
     res.render("new");
 });
 
-// Here do the GET of beats. * Need to be beat id specific. Udemycourse explains this.
-// app.get("/") {
-
-// }
 
 // SHOW - shows more info about one beat
 app.get("/main/:id", function(req, res) {
-  console.log("Works!");
-
   // find beat with provided ID
   Beat.findById(req.params.id, function(err, foundBeat) {
     if (err) {
       console.log(err);
     } else {
+      console.log("TEST");
+      console.log(foundBeat.renditions[0].artist);
       res.render("show", {beat: foundBeat});
     }
   });
 });
+
 
 app.listen(process.env.PORT || 4000, process.env.IP, function() {
     console.log("RapRank server has started locally on 4000...");
