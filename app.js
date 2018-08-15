@@ -1,25 +1,78 @@
 
+// Module dependencies
+
+
 var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
-
+// Connect to Mongo Database
 mongoose.connect("mongodb://localhost:27017/rap_rank",{ useNewUrlParser: true });
+var conn = mongoose.connection;
+var path = require('path');
+// require GridFS
+var Grid = require('gridfs-stream');
+var fs = require('fs');
+
+
+
+// Connect GridFS with Mongo
+Grid.mongo = mongoose.mongo;
+
+var storeOrRetrieve = 1; // store = 0, retrieve = 1
+// RetrieveFromDB("oldtune.mp3");
+
+// Upload to db
+function UploadToDB(fname) {
+  // where to find video in the filesystem that we will store in DB
+  var musicPath = path.join(__dirname, 'readFrom/' + fname);
+  conn.once('open', function() {
+    console.log("-Connection open-");
+    var gfs = Grid(conn.db);
+    // Will be stored in Mongo as whatever name you specify here.
+    var writestream = gfs.createWriteStream({
+      filename: fname
+    });
+    // create a read-stream from where the video currently is (musicPath)
+    // and pipe it into the database (through write-stream)
+    fs.createReadStream(musicPath).pipe(writestream);
+
+    writestream.on('close', function(file) {
+      // Do something with file
+      console.log(file.filename + " written to DB Successfully!");
+    });
+  });
+}
+
+// Download from db
+function RetrieveFromDB(fname) {
+  conn.once('open', function() {
+    console.log("-Connection open-");
+    var gfs = Grid(conn.db);
+    var fs_write_stream = fs.createWriteStream(path.join(__dirname, 'writeTo/' + fname));
+    var readstream = gfs.createReadStream({
+      filename: fname
+    });
+    readstream.pipe(fs_write_stream);
+    fs_write_stream.on('close', function() {
+      console.log("File retrieved from DB successfully!");
+    });
+  });    
+}
   
-    
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 
-// SCHEMA SETUP
+// Rendition Schema Setup
 var renditionSchema = new mongoose.Schema({
   artist: String,
     url: String,
     rank: Number
 });
-
 var Rendition = mongoose.model("Rendition", renditionSchema);
 
+// Beat Schema Setup
 var beatSchema = new mongoose.Schema({
   id: Number,
   name: String,
@@ -37,42 +90,8 @@ var beatSchema = new mongoose.Schema({
     favs: Number
   },
   comments: [{body: String, date: Date}]
-
 });
-
 var Beat = mongoose.model("Beat", beatSchema);
-
-// Beat.create(
-//     {
-//         id:1, 
-//         name: "Stanky", 
-//         producer: "MetroBoomin", 
-//         image:"https://www.recordingconnection.com/wp-content/uploads/howtos/console.jpg", 
-//         upvotes:754
-//     }, function(err, beat) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//           console.log("NEWLY CREATED BEAT: ");
-//           console.log(beat);
-//         }
-//     }
-//   );
-
-
-
-// var beats = [
-//   {id:1, name: "Stanky", producer: "MetroBoomin", image:"https://www.recordingconnection.com/wp-content/uploads/howtos/console.jpg", upvotes:754},
-//   {id:2, name: "Clippa", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:523},
-//   {id:3, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224},
-//   {id:4, name: "layback", producer: "JID", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:213},
-//   {id:5, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224},
-//   {id:6, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224},
-//   {id:7, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224},
-//   {id:8, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224},
-//   {id:9, name: "Dread", producer: "ThenisLime", image:"https://cdn.careersinmusic.com/wp-content/uploads/2015/05/Fotolia_74653861_S_copyright.jpg", upvotes:224}
-//   ];
-
 
 // Landing Route
 app.get("/", function(req, res) {
@@ -116,6 +135,7 @@ app.post("/main", function(req, res) {
    });
 });
 
+
 // POST to /main/:id (Upload own rendition)
 app.post("/rendition", function(req, res) {
 
@@ -141,34 +161,6 @@ app.post("/rendition", function(req, res) {
         }
     );
 
-
-
-    // Beat.findById(req.body.id, function(err, foundBeat) {
-    //   if (err) {
-    //     console.log("ERROR: cannot upload new rendition");
-    //     console.log(err);
-    //   } else {
-        
-    //     foundBeat.renditions.push({artist:artist,url:source,rank:rank});
-    //     console.log(foundBeat.renditions);
-    //     // Rendition.create(newRendition, function(err, newlyCreatedRendition) {
-    //     //   if (err) {
-    //     //     console.log(err);
-    //     //   } else {
-    //     //     console.log(foundBeat.renditions);
-    //     //     foundBeat.renditions.push(newlyCreatedRendition);
-    //     //     res.redirect("/main/" + req.body.id);
-
-    //     //   }
-    //     // });
-
-    //     // foundBeat.renditions.push(newRendition);
-    //     // console.log("POST NEW RENDITION WORKS!");
-    //     // console.log(foundBeat);
-    //     // console.log(req.params.id);
-    //     // res.redirect("/main/" + req.body.id);
-    //   }
-    // }); 
 });
 
 // "New" page for uploading the new rendition
@@ -182,7 +174,7 @@ app.get("/main/new", function(req, res) {
 });
 
 
-// SHOW - shows more info about one beat
+// Go to SHOW page (more info about a beat)
 app.get("/main/:id", function(req, res) {
   // find beat with provided ID
   Beat.findById(req.params.id, function(err, foundBeat) {
