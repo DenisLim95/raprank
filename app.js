@@ -13,6 +13,7 @@ var path = require('path');
 // require GridFS
 var Grid = require('gridfs-stream');
 var fs = require('fs');
+var mediaserver = require('mediaserver');
 
 
 // Include p5 library
@@ -137,6 +138,44 @@ app.post("/main", function(req, res) {
        res.redirect("/main");
       }
    });
+});
+
+
+/** Implementing Simple Music Server using Express JS **/
+// app.get('/music', function(req,res){
+//   // File to be served
+//   var fileId = req.query.id; 
+//   var file = __dirname + '/music/' + fileId;
+//   fs.exists(file,function(exists){
+//     if(exists)
+//     {
+//       var rstream = fs.createReadStream(file);
+//       rstream.pipe(res);
+//     }
+//     else
+//     {
+//       res.send("Its a 404");
+//       res.end();
+//     }
+//   });
+// });
+app.get('/music', function(req,res){
+  // File to be served
+  var fileId = req.query.id; 
+  var file = __dirname + '/music/' + fileId;
+  fs.exists(file,function(exists){
+    if(exists)
+    {
+      // var rstream = fs.createReadStream(file);
+      // rstream.pipe(res);
+      mediaserver.pipe(req,res,file);
+    }
+    else
+    {
+      res.send("Its a 404");
+      res.end();
+    }
+  });
 });
 
 
