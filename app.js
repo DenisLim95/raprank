@@ -15,6 +15,10 @@ var Grid = require('gridfs-stream');
 var fs = require('fs');
 
 
+// Include p5 library
+
+
+
 
 // Connect GridFS with Mongo
 Grid.mongo = mongoose.mongo;
