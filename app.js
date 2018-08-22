@@ -64,38 +64,85 @@ function RetrieveFromDB(fname) {
     });
   });    
 }
+
+// Producer ID
+function getNextPID() {
+
+}
+
+// Rapper ID
+function getNextRID() {
+
+}
+
+// Beat ID
+function getNextBID() {
+
+}
+
+// Rendition ID
+function getNextRenID() {
+
+}
+
+// Comment ID
+function getNextCID() {
+
+}
   
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 
-// Rendition Schema Setup
-var renditionSchema = new mongoose.Schema({
-  artist: String,
-    url: String,
-    rank: Number
+// User Schema Set Up
+var userSchema = new mongoose.Schema({
+  UserID: Number, // Maybe use this ID to store as PID or RID?
+  firstName: String,
+  lastName: String,
+  email: String,
+  age: Number
 });
-var Rendition = mongoose.model("Rendition", renditionSchema);
 
-// Beat Schema Setup
-var beatSchema = new mongoose.Schema({
-  id: Number,
-  name: String,
-  producer: String,
-  image: String,
-  upvotes: Number,
-  renditions: [{
-    artist: String,
-    url: String,
-    rank: Number
-  }],
-  source: String, // music streaming url (soundcloud?)
-  meta: {
-    upvotes: Number,
-    favs: Number
-  },
-  comments: [{body: String, date: Date}]
+
+// Producer Schema Set up
+var producerSchema = new mongoose.Schema({
+  PID: Number,
+  P_Name: String,
+  beatIDs: [Number]
 });
+
+// Beat Schema Set up
+var beatSchema = new mongoose.Schema({
+  BID: Number,
+  PID: Number,
+  beat_name: String,
+  image_url : String,
+  upvotes: Number,
+  favs: Number,
+  commentIDs: [Number]
+});
+
+// Comment Schema Set up
+var commentSchema = new mongoose.Schema({
+  CID: Number,
+  SID: Number, // Id of the beat or the rendition
+  userID: Number,
+  text: String,
+  date: Date
+});
+
+// Rendition Schema Set up
+var renditionSchema = new mongoose.Schema({
+  RenID: Number, // Rendition unique ID: use this for name for storing into GridFS
+  BID: Number,
+  RID: Number, // Rapper ID
+  R_name: String, // Rapper name
+  B_name: String // Beat name
+});
+
+
+
+var Rendition = mongoose.model("Rendition", renditionSchema);
 var Beat = mongoose.model("Beat", beatSchema);
 
 // Landing Route
