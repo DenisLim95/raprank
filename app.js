@@ -111,6 +111,13 @@ var producerSchema = new mongoose.Schema({
   beatIDs: [Number]
 });
 
+// Rapper Schema set up
+var rapperSchema = new mongoose.Schema({
+  RID: Number,
+  R_Name: String,
+  renditionIDs: [Number]
+});
+
 // Beat Schema Set up
 var beatSchema = new mongoose.Schema({
   BID: Number,
@@ -138,6 +145,7 @@ var renditionSchema = new mongoose.Schema({
   RID: Number, // Rapper ID
   R_name: String, // Rapper name
   B_name: String // Beat name
+  commentIDs: Number
 });
 
 
