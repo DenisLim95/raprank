@@ -1,6 +1,24 @@
+// ROUTES
+// GET main : shows top beat ladder
+// GET main/new: shows page for uploading a beat
+// POST main: Post a track
+
+// GET main/:id: shows page of a beat
+// GET main/:id/new: shows page for uploading new rendition.
+// POST main/:id: upload new rendition action.
+
+// GET music: route for finding beats ???
+
+// GET login: login page
+// POST login: sign in action
+// GET login/new: sign up page
+// POST login/new: sign up action
+
+
+
+
 
 // Module dependencies
-
 
 var express = require("express");
 var app = express();
@@ -16,7 +34,8 @@ var fs = require('fs');
 var mediaserver = require('mediaserver');
 
 
-// Include p5 library
+// CONSTANTS
+var newBID = 0;
 
 
 
@@ -77,7 +96,8 @@ function getNextRID() {
 
 // Beat ID
 function getNextBID() {
-
+  newBID++;
+  return newBID-1;
 }
 
 // Rendition ID
@@ -93,15 +113,63 @@ function getNextCID() {
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
+var userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  passwordConf: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: false
+  },
+  lastName: {
+    type: String,
+    required: false
+  },
+  DOB: {
+    type: String,
+    required: false
+  },
+  beatIDs: {
+    type: [String],
+    required: false
+  },
+  renditionIDs: {
+    type: [String],
+    required: false
+  }
+
+});
+var User = mongoose.model('User', userSchema);
+module.exports = User;
 
 // User Schema Set Up
-var userSchema = new mongoose.Schema({
-  UserID: Number, // Maybe use this ID to store as PID or RID?
-  firstName: String,
-  lastName: String,
-  email: String,
-  age: Number
-});
+// var userSchema = new mongoose.Schema({
+
+
+
+//   UserID: Number, // Maybe use this ID to store as PID or RID?
+//   firstName: String,
+//   lastName: String,
+//   email: String,
+//   age: Number
+// });
 
 
 // Producer Schema Set up
@@ -144,12 +212,12 @@ var renditionSchema = new mongoose.Schema({
   BID: Number,
   RID: Number, // Rapper ID
   R_name: String, // Rapper name
-  B_name: String // Beat name
+  B_name: String, // Beat name
   commentIDs: Number
 });
 
 
-
+// var User = mongoose.model("User", userSchema);
 var Rendition = mongoose.model("Rendition", renditionSchema);
 var Beat = mongoose.model("Beat", beatSchema);
 
@@ -169,9 +237,35 @@ app.get("/main", function(req, res) {
   });
 });
 
+
+app.get("/login", function(req, res) {
+  res.render("login");
+});
+
+app.get("/login/new", function(req, res) {
+  res.render("signup");
+})
+
+
+// var beatSchema = new mongoose.Schema({
+//   BID: Number,
+//   PID: Number,
+//   beat_name: String,
+//   image_url : String,
+//   upvotes: Number,
+//   favs: Number,
+//   commentIDs: [Number]
+// });
+
+
+// Logout can be a GET
+
+
 // Post to main (Upload new beat)
 app.post("/main", function(req, res) {
-   var id = 99;
+   var id = getNextBID();
+
+
    var name = req.body.name;
    var producer = req.body.producer;
    var image = req.body.image;
@@ -193,6 +287,67 @@ app.post("/main", function(req, res) {
        res.redirect("/main");
       }
    });
+});
+
+
+
+// var userSchema = new mongoose.Schema({
+//   email: {
+//     type: String,
+//     unique: true,
+//     required: true,
+//     trim: true
+//   },
+//   username: {
+//     type: String,
+//     unique: true,
+//     required: true,
+//     trim: true
+//   },
+//   password: {
+//     type: String,
+//     required: true
+//   },
+//   passwordConf: {
+//     type: String,
+//     required: true
+//   },
+//   name: {
+//     type: String,
+//     required: false
+//   },
+//   lastName: {
+//     type: String,
+//     required: false
+//   },
+//   DOB: {
+//     type: String,
+//     required: false
+//   }
+// });
+
+// New User Sign Up
+app.post("/signup", function(req, res) {
+  if (req.body.email && req.body.username && req.body.password && req.body.passwordConf) {
+    var userData = {
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      passwordConf: req.body.passwordConf,
+      name: req.body.name,
+      lastName: req.body.lastName,
+      DOB: req.body.DOB
+    }
+
+    //use schema.create to insert data into the db
+    User.create(userData, function (err, user) {
+      if (err) {
+        return next(err)
+      } else {
+        return res.redirect('/main');
+      }
+    });
+  }
 });
 
 

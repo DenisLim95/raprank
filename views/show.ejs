@@ -95,41 +95,30 @@
 	<div id="parentDiv"></div>
 
 	<form action="/main/<%= beat._id %>/new">
-        <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/<%= beat._id %>/new">Upload your own rendition!</button>            
-    </form>
+      <button class="btn btn-lg btn-primary" style="position: align-right;" href="/main/<%= beat._id %>/new">Upload your own rendition!</button>            
+  </form>
 
-    	<!-- <a href="http://localhost:4000/music?id=oldtune.mp3"> <button class="btn btn-success"> Play </button></a> <hr> -->
-    	<audio class="audio" controls src="http://localhost:4000/music?id=oldtune.mp3" id="audioPlayer"></audio>
+  	<!-- <a href="http://localhost:4000/music?id=oldtune.mp3"> <button class="btn btn-success"> Play </button></a> <hr> -->
+  	<audio class="audio" controls src="http://localhost:4000/music?id=oldtune.mp3" id="audioPlayer"></audio>
 
-
-    	<ul id="playlist">
-    		<% if (beat.renditions.length > 0) { %>
-    		<% (beat.renditions).forEach(function(rendition) { %>
-	    		<li>
-	      			<h6>Rendition by</h6>
-	      			<a href=""><%= rendition.artist %></a>
-	      		</li>
-
-
-      		    <% }); %>
-	    	<% } else { %>
-		         <p> No renditions yet...</p>
-		    <% } %>
-      		
-    	</ul>
+    <!-- Fix this -->
+  	<ul id="playlist">
+  		<% if (beat.renditions.length > 0) { %>
+  		<% (beat.renditions).forEach(function(rendition) { %>
+    		<li>
+      			<h6>Rendition by</h6>
+      			<a href=""><%= rendition.artist %></a>
+      		</li>
+    		    <% }); %>
+    	<% } else { %>
+	         <p> No renditions yet...</p>
+	    <% } %>
+    		
+  	</ul>
 <!--     	<% if (beat.renditions.length > 0) { %>
     		<% (beat.renditions).forEach(function(rendition) { %>
 		            <div class="form-inline" style="margin-top:5px; outline-style: solid">
 		              <div>
-
-		              		
-
-
-
-
-
-
-		                
 		                <h6>source: <%= rendition.url %></h6>
 		                <h6>rank: <%= rendition.rank %></h6>
 		                <button class="btn btn-lg btn-secondary">Play</button>
