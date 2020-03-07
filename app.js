@@ -194,7 +194,8 @@ var beatSchema = new mongoose.Schema({
   image_url : String,
   upvotes: Number,
   favs: Number,
-  commentIDs: [Number]
+  commentIDs: [Number],
+  renditions: [{type: Schema.ObjectId, ref: 'Rendition'}]
 });
 
 // Comment Schema Set up
